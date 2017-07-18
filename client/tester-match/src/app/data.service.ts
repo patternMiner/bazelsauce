@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { Http, Response, URLSearchParams } from '@angular/http';
 import 'rxjs/add/operator/map'
 
 @Injectable()
@@ -20,8 +20,15 @@ export class DataService {
       .map((res: Response) => res.json());
   }
 
-  public matchTesters() {
-    return this.http.get(this.testersUrl)
+  public matchTesters(countries: string[], devices: string[]) {
+    let params: URLSearchParams = new URLSearchParams();
+    for (let country of countries) {
+      params.append('country', country);
+    }
+    for (let device of devices) {
+      params.append('device', device);
+    }
+    return this.http.get(this.testersUrl, {search: params})
       .map((res: Response) => res.json());
   }
 }

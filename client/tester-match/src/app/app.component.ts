@@ -41,7 +41,8 @@ export class AppComponent implements OnInit {
     let selectedDevices = this.getSelectedIds(this.devices);
     console.info("Selected countries: ", selectedCountries);
     console.info("Selected devices: ", selectedDevices);
-    this.dataService.matchTesters().subscribe(data =>{
+    this.testers.length = 0;
+    this.dataService.matchTesters(selectedCountries, selectedDevices).subscribe(data => {
       for (let item of data.Items) {
         this.testers.push(new Tester(item.Id, item.FirstName, item.LastName, item.Country, item.Rank));
       }
