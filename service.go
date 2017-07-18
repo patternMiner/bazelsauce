@@ -18,8 +18,12 @@ func main() {
 
 	http.HandleFunc("/info", handlers.InfoHandler)
 
-	http.HandleFunc("/match", handlers.MatchHandler)
+	http.HandleFunc("/countries", handlers.CountriesHandler)
 
-	fmt.Println("Starting up on 8080")
+	http.HandleFunc("/devices", handlers.DevicesHandler)
+
+	http.HandleFunc("/tester_match", handlers.MatchHandler)
+
+	fmt.Println("Starting up the tester_match service on 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

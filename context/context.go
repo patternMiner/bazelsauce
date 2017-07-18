@@ -7,12 +7,6 @@ import (
 	"path/filepath"
 )
 
-type TesterRecord []string
-type DeviceRecord []string
-type Testers []string
-type Devices []string
-type Countries []string
-
 const (
 	bugs_data = "applause/data/bugs.csv"
 	devices_data = "applause/data/devices.csv"
@@ -24,82 +18,26 @@ var (
 	data_files = []string {testers_data, devices_data, tester_device_data, bugs_data}
 
 	// dictionary of testers by id
-	TesterMap = make(map[string]TesterRecord)
+	TesterMap = make(StringSliceMap)
 
 	// dictionary of devices by id
-	DeviceMap = make(map[string]DeviceRecord)
+	DeviceMap = make(StringSliceMap)
 
 	// dictionary of testers by country
-	CountryTestersMap = make(map[string]Testers)
+	CountryTestersMap = make(StringSetMap)
 
 	// dictionary of testers by device
-	DeviceTestersMap = make(map[string]Testers)
+	DeviceTestersMap = make(StringSetMap)
 
 	// dictionary of testers by country_device pair
-	CountryDeviceTestersMap = make(map[string]Testers)
+	CountryDeviceTestersMap = make(StringSetMap)
 
 	// dictionary of bug count by tester_device pair
-	TesterDeviceBugCountMap = make(map[string]int)
+	TesterDeviceBugCountMap = make(RankMap)
 
-	CountryList = Countries{}
-	DeviceList = Devices{}
+	CountryList = make(StringSet)
+	DeviceList = make(StringSet)
 )
-
-// Initializes the context by fetching all data records into various maps.
-func InitContext() error {
-	for _, path := range data_files {
-		records, err := fetch(path)
-		if err != nil {
-			return err
-		}
-		switch path {
-		case testers_data:
-			for _, record := range records[1:] {
-				id := record[0]
-				country := record[3]
-				TesterMap[id] = record
-				CountryTestersMap[country] = append(CountryTestersMap[country], id)
-			}
-			break
-		case devices_data:
-			for _, record := range records[1:] {
-				id := record[0]
-				DeviceMap[id] = record
-				DeviceList = append(DeviceList, id)
-			}
-			break
-		case tester_device_data:
-			for _, record := range records[1:] {
-				tester_id := record[0]
-				device_id := record[1]
-				DeviceTestersMap[device_id] = append(DeviceTestersMap[device_id], tester_id)
-			}
-			break
-		case bugs_data:
-			for _, record := range records[1:] {
-				tester_device := record[2] + "_" + record[1]
-				TesterDeviceBugCountMap[tester_device]++
-			}
-			break
-		}
-	}
-	// Initialize CountryDeviceTestersMap
-	for country, country_testers := range CountryTestersMap {
-		CountryList = append(CountryList, country)
-		for device, device_testers := range DeviceTestersMap {
-			country_device := country + "_" + device
-			for _, country_tester := range country_testers {
-				for _, device_tester := range device_testers {
-					if country_tester == device_tester {
-						CountryDeviceTestersMap[country_device] =
-							append(CountryDeviceTestersMap[country_device], country_tester)
-					}
-				}
-			}
-		}
-	}
-	return nil
-}
 
 // Fetches data records from the given file path
 func fetch(path string) (records [][]string, err error) {
@@ -114,54 +52,101 @@ func fetch(path string) (records [][]string, err error) {
 	return
 }
 
-// Returns the unique testers for the given countries and devices
-func TestersByCountryDevice(countries Countries, devices Devices) Testers {
-	testers := Testers{}
-	if len(countries) == 0 {
-		countries = CountryList
-	} else {
-		countries = Unique(countries)
+// Initializes the context by fetching all data records into various maps.
+func InitContext() error {
+	for _, path := range data_files {
+		records, err := fetch(path)
+		if err != nil {
+			return err
+		}
+		switch path {
+		case testers_data:
+			for _, record := range records[1:] {
+				id := record[0]
+				country := record[3]
+				TesterMap[id] = record
+				CountryTestersMap.stringSet(country).append(id)
+			}
+			break
+		case devices_data:
+			for _, record := range records[1:] {
+				id := record[0]
+				DeviceMap[id] = record
+				DeviceList.append(id)
+			}
+			break
+		case tester_device_data:
+			for _, record := range records[1:] {
+				tester_id := record[0]
+				device_id := record[1]
+				DeviceTestersMap.stringSet(device_id).append(tester_id)
+			}
+			break
+		case bugs_data:
+			for _, record := range records[1:] {
+				tester_device := record[2] + "_" + record[1]
+				TesterDeviceBugCountMap[tester_device]++
+			}
+			break
+		}
 	}
-	if len(devices) == 0 {
-		devices = DeviceList
-	} else {
-		devices = Unique(devices)
-	}
-	for _, country := range countries {
-		for _, device := range devices {
+	// Initialize CountryDeviceTestersMap
+	for country, country_testers := range CountryTestersMap {
+		CountryList.append(country)
+		for device, device_testers := range DeviceTestersMap {
 			country_device := country + "_" + device
-			testers = append(testers, CountryDeviceTestersMap[country_device]...)
+			for country_tester := range country_testers {
+				for device_tester := range device_testers {
+					if country_tester == device_tester {
+						CountryDeviceTestersMap.stringSet(country_device).append(country_tester)
+					}
+				}
+			}
 		}
 	}
-	return Unique(testers)
+	return nil
 }
 
-func Unique(testers []string) []string {
-	uniqueTesters := []string{}
-	found := make(map[string]bool)
-	for i, x := range testers {
-		if !found[x] {
-			found[x] = true
-			uniqueTesters = append(uniqueTesters, testers[i])
+// Returns the testerSet for the given countrySet and deviceSet
+func TesterSetByCountryDevice(countrySet, deviceSet StringSet) StringSet {
+	testers := make(StringSet)
+	for country := range countrySet {
+		for device := range deviceSet {
+			country_device := country + "_" + device
+			testers.merge(CountryDeviceTestersMap[country_device])
 		}
 	}
-	return uniqueTesters
+	return testers
 }
 
-func RankTesters(testers Testers, devices Devices) map[string]int {
-	testerRankMap := make(map[string]int)
-	if len(devices) == 0 {
-		devices = DeviceList
-	} else {
-		devices = Unique(devices)
-	}
-	for _, tester := range testers {
+// Returns the RankMap of the given testerSet for the given deviceSet
+func TesterRankMap(testerSet, deviceSet StringSet) RankMap {
+	testerRankMap := make(RankMap)
+	for tester := range testerSet {
 		testerRankMap[tester] += 0
-		for _, device := range devices {
+		for device := range deviceSet {
 			tester_device := tester + "_" + device
 			bug_count := TesterDeviceBugCountMap[tester_device]
 			testerRankMap[tester] += bug_count
 		}
 	}
 	return testerRankMap
+}
+
+func MatchTesters(countries, devices StringSlice) PairList {
+	countrySet := countries.makeStringSet()
+	deviceSet := devices.makeStringSet()
+	if len(countrySet) == 0 {
+		countrySet = CountryList
+	}
+	if len(deviceSet) == 0 {
+		deviceSet = DeviceList
+	}
+	testerSet := TesterSetByCountryDevice(countrySet, deviceSet)
+	testerRankMap := TesterRankMap(testerSet, deviceSet)
+	// Make a PairList out of testerRankMap, each Pair containing the tester_id as key and bug_count as value.
+	testerList := makePairList(testerRankMap)
+	// Sort the PairList by rank
+	testerList.SortByValue()
+	return testerList
 }

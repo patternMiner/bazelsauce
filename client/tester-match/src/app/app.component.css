@@ -1,0 +1,16 @@
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.content-panel {
+  padding: 10px;
+}
+
+.selection-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.selection-item {
+  flex: auto;
+}
