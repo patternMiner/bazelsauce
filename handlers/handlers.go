@@ -3,7 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"../context"
+	"github.com/patternMiner/applause/context"
 	"net/http"
 )
 

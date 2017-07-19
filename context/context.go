@@ -8,10 +8,10 @@ import (
 )
 
 const (
-	bugs_data = "applause/data/bugs.csv"
-	devices_data = "applause/data/devices.csv"
-	testers_data = "applause/data/testers.csv"
-	tester_device_data = "applause/data/tester_device.csv"
+	bugs_data = "github.com/patternMiner/applause/data/bugs.csv"
+	devices_data = "github.com/patternMiner/applause/data/devices.csv"
+	testers_data = "github.com/patternMiner/applause/data/testers.csv"
+	tester_device_data = "github.com/patternMiner/applause/data/tester_device.csv"
 )
 
 var (

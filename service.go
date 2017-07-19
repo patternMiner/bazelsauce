@@ -1,9 +1,9 @@
 package main
 
 import (
-	"./context"
+	"github.com/patternMiner/applause/context"
 	"fmt"
-	"./handlers"
+	"github.com/patternMiner/applause/handlers"
 	"log"
 	"net/http"
 )
@@ -22,9 +22,9 @@ func main() {
 
 	http.HandleFunc("/tester_match", handlers.MatchHandler)
 
-	fs := http.FileServer(http.Dir("applause/client/tester-match/dist"))
-	http.Handle("/applause/client/tester-match/dist/",
-		http.StripPrefix("/applause/client/tester-match/dist/", fs))
+	fs := http.FileServer(http.Dir("github.com/patternMiner/applause/client/tester-match/dist"))
+	http.Handle("/static/",
+		http.StripPrefix("/static/", fs))
 
 	fmt.Println("Starting up the tester_match service on 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
