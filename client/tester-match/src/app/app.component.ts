@@ -36,13 +36,14 @@ export class AppComponent implements OnInit {
     });
    }
 
-  onSubmit(value) {
+  onSubmit() {
     let selectedCountries = this.getSelectedIds(this.countries);
     let selectedDevices = this.getSelectedIds(this.devices);
     console.info("Selected countries: ", selectedCountries);
     console.info("Selected devices: ", selectedDevices);
     this.testers.length = 0;
     this.dataService.matchTesters(selectedCountries, selectedDevices).subscribe(data => {
+      this.testers.push(new Tester("Id", "FirstName", "LastName", "Country", "Rank"))
       for (let item of data.Items) {
         this.testers.push(new Tester(item.Id, item.FirstName, item.LastName, item.Country, item.Rank));
       }

@@ -18,7 +18,7 @@
         <div class="selection-container">
           <div class="selection-item">
             <md-card>
-              <md-card-title><h4>Select countries</h4></md-card-title>
+              <md-card-title><h5>Select countries</h5></md-card-title>
               <md-card-content>
                 <selection-list [selectionModel]="countrySelectionModel"></selection-list>
               </md-card-content>
@@ -26,19 +26,24 @@
           </div>
           <div class="selection-item">
             <md-card>
-              <md-card-title><h4>Select devices</h4></md-card-title>
+              <md-card-title><h5>Select devices</h5></md-card-title>
               <md-card-content>
                 <selection-list [selectionModel]="deviceSelectionModel"></selection-list>
               </md-card-content>
             </md-card>
           </div>
+          <div class="selection-item flex">
+            <md-card>
+              <md-card-title>
+                <button type="submit" md-raised-button color="accent">Match Testers</button>
+              </md-card-title>
+              <md-card-content>
+                <matched-testers [testerList]="testerList"></matched-testers>
+              </md-card-content>
+            </md-card>
+          </div>
         </div>
-        <input type="submit" class="button" value="Match Testers">
       </div>
     </form>
-  </div>
-
-  <div>
-    <matched-testers [testerList]="testerList"></matched-testers>
   </div>
 </div>

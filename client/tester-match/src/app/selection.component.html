@@ -1,6 +1,6 @@
 <div>
-  <button type="button" md-button (click)="selectionModel.selectAll()">Select All</button>
-  <button type="button" md-button (click)="selectionModel.clearSelection()">Clear Selection</button>
+  <button type="button" md-raised-button (click)="selectionModel.selectAll()">Select All</button>
+  <button type="button" md-raised-button (click)="selectionModel.clearSelection()">Clear Selection</button>
   <md-list>
     <md-list-item *ngFor="let item of selectionModel.items">
       <md-checkbox [(ngModel)]="item.selected">{{item.label}}</md-checkbox>

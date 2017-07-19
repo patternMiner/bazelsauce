@@ -6,7 +6,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { DataService } from './data.service';
 import { MdButtonModule, MdMenuModule, MdToolbarModule, MdIconModule, MdListModule,
-  MdCheckboxModule} from '@angular/material';
+  MdCheckboxModule, MdGridListModule} from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SelectionListComponent } from "./selection.component";
 import { MatchedTestersComponent } from "./testers.component";
@@ -27,6 +27,7 @@ import { MatchedTestersComponent } from "./testers.component";
     MdIconModule,
     MdListModule,
     MdCheckboxModule,
+    MdGridListModule,
     FormsModule,
     ReactiveFormsModule
   ],

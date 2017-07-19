@@ -1,13 +1,8 @@
-<div>
-  <md-list>
-    <md-list-item *ngFor="let item of testerList.items">
-      <div class="tester-row">
-        <span class="tester-column">{{item.id}}</span>
-        <span class="tester-column">{{item.firstName}}</span>
-        <span class="tester-column">{{item.lastName}}</span>
-        <span class="tester-column">{{item.country}}</span>
-        <span class="tester-column">{{item.rank}}</span>
-      </div>
-    </md-list-item>
-  </md-list>
-</div>
+<md-list>
+  <md-grid-list cols="4" rowHeight="30px" *ngFor="let item of testerList.items">
+      <md-grid-tile>{{item.firstName}}</md-grid-tile>
+      <md-grid-tile>{{item.lastName}}</md-grid-tile>
+      <md-grid-tile>{{item.country}}</md-grid-tile>
+      <md-grid-tile>{{item.rank}}</md-grid-tile>
+  </md-grid-list>
+</md-list>
