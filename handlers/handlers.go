@@ -1,9 +1,10 @@
-package service
+package handlers
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"github.com/patternMiner/applause/context"
 )
 
 type Response struct {
@@ -33,8 +34,8 @@ func DefaultHandler (w http.ResponseWriter, req *http.Request) {
 func CountriesHandler (w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
-	countries := StringSlice{}
-	for country := range CountryList {
+	countries := context.StringSlice{}
+	for country := range context.CountryList {
 		countries = append(countries, country)
 	}
 	data, err := json.Marshal(Response{Items: countries})
@@ -48,8 +49,8 @@ func DevicesHandler (w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
 	devices := []Device{}
-	for device := range DeviceList {
-		deviceRecord := DeviceMap[device]
+	for device := range context.DeviceList {
+		deviceRecord := context.DeviceMap[device]
 		devices = append(devices, Device{Id: deviceRecord[0], Description: deviceRecord[1]})
 	}
 	data, err := json.Marshal(Response{Items: devices})
@@ -65,11 +66,11 @@ func MatchHandler (w http.ResponseWriter, req *http.Request) {
 	query := req.URL.Query()
 	countries := query["country"]
 	devices := query["device"]
-	testersByRank := MatchTesters(countries, devices)
+	testersByRank := context.TesterMap(countries, devices)
 	testers := make([]Tester, len(testersByRank))
 	for i, pair := range testersByRank {
-		tester := TesterMap[pair.Key]
-		rank := pair.Value
+		tester := context.TesterMap[context.Pair.Key]
+		rank := context.Pair.Value
 		testers[i] = Tester{Id: tester[0], FirstName: tester[1], LastName: tester[2], Country: tester[3], Rank: rank}
 	}
 	data, err := json.Marshal(Response{Items: testers})
@@ -82,37 +83,37 @@ func MatchHandler (w http.ResponseWriter, req *http.Request) {
 func InfoHandler(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	fmt.Fprintln(w, "Testers")
-	for id, tester := range TesterMap {
+	for id, tester := range context.TesterMap {
 		fmt.Fprintf(w, "%2s: %s\n", id, tester)
 	}
 	fmt.Fprintln(w)
 
 	fmt.Fprintln(w, "Testers by country")
-	for country, testers := range CountryTestersMap {
+	for country, testers := range context.CountryTestersMap {
 		fmt.Fprintf(w, "%s: %s\n", country, testers)
 	}
 	fmt.Fprintln(w)
 
 	fmt.Fprintln(w, "Devices")
-	for id, device := range DeviceMap {
+	for id, device := range context.DeviceMap {
 		fmt.Fprintf(w, "%2s: %s\n", id, device)
 	}
 	fmt.Fprintln(w)
 
 	fmt.Fprintln(w, "Testers by device")
-	for device, testers := range DeviceTestersMap {
+	for device, testers := range context.DeviceTestersMap {
 		fmt.Fprintf(w, "%2s: %s\n", device, testers)
 	}
 	fmt.Fprintln(w)
 
 	fmt.Fprintln(w, "Testers by country_device")
-	for country_device, testers := range CountryDeviceTestersMap {
+	for country_device, testers := range context.CountryDeviceTestersMap {
 		fmt.Fprintf(w, "%8s: %s\n", country_device, testers)
 	}
 	fmt.Fprintln(w)
 
 	fmt.Fprintln(w, "BugCount by tester_device")
-	for tester_device, count := range TesterDeviceBugCountMap {
+	for tester_device, count := range context.TesterDeviceBugCountMap {
 		fmt.Fprintf(w, "%5s: %d\n", tester_device, count)
 	}
 	fmt.Fprintln(w)
