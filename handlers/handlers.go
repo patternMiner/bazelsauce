@@ -66,11 +66,11 @@ func MatchHandler (w http.ResponseWriter, req *http.Request) {
 	query := req.URL.Query()
 	countries := query["country"]
 	devices := query["device"]
-	testersByRank := context.TesterMap(countries, devices)
+	testersByRank := context.MatchTesters(countries, devices)
 	testers := make([]Tester, len(testersByRank))
 	for i, pair := range testersByRank {
-		tester := context.TesterMap[context.Pair.Key]
-		rank := context.Pair.Value
+		tester := context.TesterMap[pair.Key]
+		rank := pair.Value
 		testers[i] = Tester{Id: tester[0], FirstName: tester[1], LastName: tester[2], Country: tester[3], Rank: rank}
 	}
 	data, err := json.Marshal(Response{Items: testers})
