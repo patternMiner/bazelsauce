@@ -1,26 +1,25 @@
 package main
 
 import (
-	"github.com/patternMiner/applause/context"
 	"fmt"
-	"github.com/patternMiner/applause/handlers"
 	"log"
 	"net/http"
+	"github.com/patternMiner/applause/service"
 )
 
 func main() {
-	err := context.InitContext()
+	err := service.InitContext()
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	http.HandleFunc("/info", handlers.InfoHandler)
+	http.HandleFunc("/info", service.InfoHandler)
 
-	http.HandleFunc("/countries", handlers.CountriesHandler)
+	http.HandleFunc("/countries", service.CountriesHandler)
 
-	http.HandleFunc("/devices", handlers.DevicesHandler)
+	http.HandleFunc("/devices", service.DevicesHandler)
 
-	http.HandleFunc("/tester_match", handlers.MatchHandler)
+	http.HandleFunc("/tester_match", service.MatchHandler)
 
 	fs := http.FileServer(http.Dir("github.com/patternMiner/applause/client/tester-match/dist"))
 	http.Handle("/static/",
