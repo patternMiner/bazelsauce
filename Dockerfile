@@ -1,10 +1,9 @@
-FROM golang:1.8-onbuild
+ FROM golang:1.8
 
-WORKDIR /go/src/applause
+ WORKDIR /go/src/app
+ COPY . .
 
-COPY . .
+ RUN go-wrapper download   # "go get -d -v ./..."
+ RUN go-wrapper install    # "go install -v ./..."
 
-RUN go-wrapper download
-RUN go-wrapper install
-
-CMD ["go-wrapper", "run"]
+ CMD ["go-wrapper", "run"] # ["app"]
