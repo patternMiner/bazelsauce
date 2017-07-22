@@ -3,6 +3,7 @@ package context
 import (
 	"bufio"
 	"encoding/csv"
+
 	"os"
 	"path/filepath"
 )
@@ -17,7 +18,8 @@ const (
 var (
 	data_files = []string {testers_data, devices_data, tester_device_data, bugs_data}
 
-	// dictionary of testers by id
+	// dic
+	// tionary of testers by id
 	TesterMap = make(StringSliceMap)
 
 	// dictionary of devices by id
