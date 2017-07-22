@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"github.com/patternMiner/applause/context"
+	"github.com/patternMiner/bazelsauce/context"
 )
 
 type Response struct {

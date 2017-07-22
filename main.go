@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"github.com/patternMiner/applause/context"
-	"github.com/patternMiner/applause/handlers"
+	"github.com/patternMiner/bazelsauce/context"
+	"github.com/patternMiner/bazelsauce/handlers"
 )
 
 func main() {
@@ -22,7 +22,7 @@ func main() {
 
 	http.HandleFunc("/tester_match", handlers.MatchHandler)
 
-	fs := http.FileServer(http.Dir("github.com/patternMiner/applause/client/tester-match/dist"))
+	fs := http.FileServer(http.Dir("github.com/patternMiner/bazelsauce/client/tester-match/dist"))
 	http.Handle("/static/",
 		http.StripPrefix("/static/", fs))
 
