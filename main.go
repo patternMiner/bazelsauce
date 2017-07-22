@@ -6,18 +6,10 @@ import (
 	"net/http"
 	"github.com/patternMiner/bazelsauce/context"
 	"github.com/patternMiner/bazelsauce/handlers"
-	"path/filepath"
-)
-var (
-	bugs_data, _ = filepath.Abs("data/bugs.csv")
-	devices_data, _ = filepath.Abs("data/devices.csv")
-	testers_data, _ = filepath.Abs("data/testers.csv")
-	tester_device_data, _ = filepath.Abs("data/tester_device.csv")
-	data_file_paths = []string {testers_data, devices_data, tester_device_data, bugs_data}
 )
 
 func main() {
-	err := context.InitContext(data_file_paths)
+	err := context.InitContext()
 	if err != nil {
 		fmt.Println(err)
 	}
