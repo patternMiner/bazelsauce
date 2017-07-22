@@ -8,16 +8,7 @@ import (
 	"path/filepath"
 )
 
-const (
-	bugs_data = "github.com/patternMiner/bazelsauce/data/bugs.csv"
-	devices_data = "github.com/patternMiner/bazelsauce/data/devices.csv"
-	testers_data = "github.com/patternMiner/bazelsauce/data/testers.csv"
-	tester_device_data = "github.com/patternMiner/bazelsauce/data/tester_device.csv"
-)
-
 var (
-	data_files = []string {testers_data, devices_data, tester_device_data, bugs_data}
-
 	// dic
 	// tionary of testers by id
 	TesterMap = make(StringSliceMap)
@@ -55,14 +46,14 @@ func fetch(path string) (records [][]string, err error) {
 }
 
 // Initializes the context by fetching all data records into various maps.
-func InitContext() error {
-	for _, path := range data_files {
+func InitContext(data_file_paths []string) error {
+	for _, path := range data_file_paths {
 		records, err := fetch(path)
 		if err != nil {
 			return err
 		}
-		switch path {
-		case testers_data:
+		switch filepath.Base(path) {
+		case "testers.csv":
 			for _, record := range records[1:] {
 				id := record[0]
 				country := record[3]
@@ -70,21 +61,21 @@ func InitContext() error {
 				CountryTestersMap.stringSet(country).append(id)
 			}
 			break
-		case devices_data:
+		case "devices.csv":
 			for _, record := range records[1:] {
 				id := record[0]
 				DeviceMap[id] = record
 				DeviceList.append(id)
 			}
 			break
-		case tester_device_data:
+		case "tester_device.csv":
 			for _, record := range records[1:] {
 				tester_id := record[0]
 				device_id := record[1]
 				DeviceTestersMap.stringSet(device_id).append(tester_id)
 			}
 			break
-		case bugs_data:
+		case "bugs.csv":
 			for _, record := range records[1:] {
 				tester_device := record[2] + "_" + record[1]
 				TesterDeviceBugCountMap[tester_device]++
