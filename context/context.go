@@ -3,7 +3,7 @@ package context
 import (
 	"bufio"
 	"encoding/csv"
-
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -34,6 +34,7 @@ var (
 
 // Fetches data records from the given file path
 func fetch(path string) (records [][]string, err error) {
+	fmt.Println(filepath.Abs("data/" + filepath.Base(path)))
 	fp, _ := filepath.Abs(path)
 	fh, err := os.Open(fp)
 	if err != nil {
