@@ -41,6 +41,9 @@ var (
 
 	CountryList = make(StringSet)
 	DeviceList = make(StringSet)
+	
+	// data fetcher task synchronization lock
+	wg sync.WaitGroup
 )
 
 // Fetches data records from the given file path
@@ -102,8 +105,6 @@ func (t DataFetcherTask) Run() {
 		break
 	}
 }
-
-var wg sync.WaitGroup
 
 // Initializes the context by fetching all data records into various maps.
 func InitContext() error {
