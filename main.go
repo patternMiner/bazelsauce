@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,7 +11,19 @@ import (
 	"crypto/tls"
 )
 
+var (
+	certPath string
+	keyPath string
+)
+
+func init() {
+	flag.StringVar(&certPath, "cert_path", "", "SSL Certificate Path")
+	flag.StringVar(&keyPath, "key_path", "", "SSL Key Path")
+}
+
 func main() {
+	flag.Parse()
+
 	err := context.InitContext()
 	if err != nil {
 		fmt.Println(err)
@@ -50,5 +63,5 @@ func main() {
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
 	}
 	fmt.Println("Starting up the tester_match https service on port 8080")
-	log.Fatal(srv.ListenAndServeTLS("localhost.pem", "server.key"))
+	log.Fatal(srv.ListenAndServeTLS(certPath, keyPath))
 }
