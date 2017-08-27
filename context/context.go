@@ -47,7 +47,7 @@ func InitContext() error {
 	async.StartDispatcher(4)
 	wg.Add(len(data_files))
 	for _, path := range data_files {
-		async.TaskQueue <- DataFetcherTask{path}
+		async.EventQueue <- DataFetchEvent{path}
 	}
 	wg.Wait()
 

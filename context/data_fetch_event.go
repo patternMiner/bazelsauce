@@ -9,11 +9,11 @@ import (
 	"os"
 )
 
-type DataFetcherTask struct {
+type DataFetchEvent struct {
 	path string
 }
 
-func (t DataFetcherTask) Run() {
+func (t DataFetchEvent) Process() {
 	defer func() {
 		log.Printf("Done reading: %s\n", t.path)
 		wg.Done()
