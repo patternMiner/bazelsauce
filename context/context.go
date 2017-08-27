@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"github.com/patternMiner/async"
+	"sync"
+	"log"
 )
 
 const (
@@ -54,47 +57,67 @@ func fetch(path string) (records [][]string, err error) {
 	return
 }
 
+type DataFetcherTask struct {
+	path string
+}
+
+func (t DataFetcherTask) Run() {
+	defer func() {
+		log.Printf("Done reading: %s\n", t.path)
+		wg.Done()
+	}()
+	records, err := fetch(t.path)
+	if err != nil {
+		log.Printf("Error fetching %s: %s\n", t.path, err)
+		return
+	}
+	switch t.path {
+	case testers_data:
+		for _, record := range records[1:] {
+			id := record[0]
+			country := record[3]
+			TesterMap[id] = record
+			CountryTestersMap.stringSet(country).append(id)
+		}
+		break
+	case devices_data:
+		for _, record := range records[1:] {
+			id := record[0]
+			DeviceMap[id] = record
+			DeviceList.append(id)
+		}
+		break
+	case tester_device_data:
+		for _, record := range records[1:] {
+			tester_id := record[0]
+			device_id := record[1]
+			DeviceTestersMap.stringSet(device_id).append(tester_id)
+		}
+		break
+	case bugs_data:
+		for _, record := range records[1:] {
+			tester_device := record[2] + "_" + record[1]
+			TesterDeviceBugCountMap[tester_device]++
+		}
+		break
+	}
+}
+
+var wg sync.WaitGroup
+
 // Initializes the context by fetching all data records into various maps.
 func InitContext() error {
+	async.StartTaskDispatcher(4)
+	wg.Add(len(data_files))
 	for _, path := range data_files {
-		records, err := fetch(path)
-		if err != nil {
-			return err
-		}
-		switch path {
-		case testers_data:
-			for _, record := range records[1:] {
-				id := record[0]
-				country := record[3]
-				TesterMap[id] = record
-				CountryTestersMap.stringSet(country).append(id)
-			}
-			break
-		case devices_data:
-			for _, record := range records[1:] {
-				id := record[0]
-				DeviceMap[id] = record
-				DeviceList.append(id)
-			}
-			break
-		case tester_device_data:
-			for _, record := range records[1:] {
-				tester_id := record[0]
-				device_id := record[1]
-				DeviceTestersMap.stringSet(device_id).append(tester_id)
-			}
-			break
-		case bugs_data:
-			for _, record := range records[1:] {
-				tester_device := record[2] + "_" + record[1]
-				TesterDeviceBugCountMap[tester_device]++
-			}
-			break
-		}
+		async.TaskQueue <- DataFetcherTask{path}
 	}
+	wg.Wait()
+
 	// Initialize CountryDeviceTestersMap
 	for country, country_testers := range CountryTestersMap {
 		CountryList.append(country)
+		log.Printf("Country: %s\n", country)
 		for device, device_testers := range DeviceTestersMap {
 			country_device := country + "_" + device
 			for country_tester := range country_testers {
