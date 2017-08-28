@@ -17,8 +17,8 @@ var (
 )
 
 func init() {
-	flag.StringVar(&certPath, "cert_path", "", "SSL Certificate Path")
-	flag.StringVar(&keyPath, "key_path", "", "SSL Key Path")
+	flag.StringVar(&certPath, "cert_path", "data/cert.pem", "SSL Certificate Path")
+	flag.StringVar(&keyPath, "key_path", "data/key.pem", "SSL Key Path")
 }
 
 func main() {
