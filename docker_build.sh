@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+cp $HOME/.ssh/*.pem data
 
 docker build -t bazelsauce:v1 .
 
