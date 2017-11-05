@@ -4,9 +4,9 @@ import 'rxjs/add/operator/map'
 
 @Injectable()
 export class DataService {
-  private countriesUrl = 'http://localhost:8080/countries';
-  private devicesUrl = 'http://localhost:8080/devices';
-  private testersUrl = 'http://localhost:8080/tester_match';
+  private countriesUrl = '/countries';
+  private devicesUrl = '/devices';
+  private testersUrl = '/tester_match';
 
   constructor(private http: Http) { }
 
